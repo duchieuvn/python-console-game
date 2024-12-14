@@ -3,7 +3,6 @@ import time
 import msvcrt
 import os
 
-
 def get_random_words():
     file_path = 'a2.txt'
     with open(file_path, 'r', encoding='utf-8') as file:
@@ -18,12 +17,24 @@ def get_word_points(random_words):
     for word in random_words:
         l = len(word)
         points[word] = l * 10 + random.randint(-l * 2, l * 2)
-
     return points
 
+def display_health(player, enemy):
+    player_health = 0 if player['health'] < 0 else player['health']
+    enemy_health = 0 if enemy['health'] < 0 else enemy['health']
+    print("\n-------------------------- Battle Status --------------------------")
+    print(f"Player: {player_health:3}/500   {'=' * (player_health // 10)}")
+    print(f"Enemy : {enemy_health:3}/500   {'=' * (enemy_health // 10)}")
+    print("-------------------------------------------------------------------")
+
+def display_words(word_points):
+    print(">>> Type one of these words:")
+    for word, points in word_points.items():
+        print(f"  {word:15} => {points:3} damage")
+    print("\n========================================================")
 
 def get_user_input(timeout):
-    print(f'\nYou have {timeout} seconds. Start typing... ', end='', flush=True)
+    print(f'You have {timeout} seconds to type', flush=True)
     start_time = time.time()
     typed_word = ""
 
@@ -40,7 +51,6 @@ def get_user_input(timeout):
                 typed_word += char
                 print(char, end='', flush=True) 
 
-    print('\nTime out. Please press Enter to continue')
     return None
 
 def handle_input(user_word, random_words, word_points, enemy):
@@ -48,13 +58,12 @@ def handle_input(user_word, random_words, word_points, enemy):
         damage = word_points[user_word]
         enemy['health'] -= damage
     else:
-        print(f'\nLose your turn')
-
+        print("\nIncorrect word! You lose your turn.")
 
 def handle_player_turn(enemy):
     random_words = get_random_words()
     word_points = get_word_points(random_words)
-    print(word_points)
+    display_words(word_points)
 
     user_word = get_user_input(timeout=6)
     handle_input(user_word, random_words, word_points, enemy)
@@ -62,7 +71,12 @@ def handle_player_turn(enemy):
 def handle_enemy_turn(player):
     player['health'] -= 50
 
-
+def handle_game_restart(restart):
+    restart = input('Do you want to play again? (y/n): ').strip().lower()
+    if restart == 'y':
+        print("\nRestarting the game...\n")
+    else:
+        print("\nThanks for playing! Goodbye!")
 
 def start_game():
     restart = 'y'
@@ -72,16 +86,21 @@ def start_game():
         player = {'health': 500}
 
         while enemy['health'] > 0 and player['health'] > 0:
-            os.system('cls')
-            print('You', player['health'], '      ', 'Enemy', enemy['health'])
+            os.system('cls' if os.name == 'nt' else 'clear')
+            display_health(player, enemy)
             handle_player_turn(enemy)
-            handle_enemy_turn(player)
+            if enemy['health'] > 0:
+                handle_enemy_turn(player)
+
+        os.system('cls')
+        display_health(player, enemy)
 
         if player['health'] <= 0:
-            print("\nGame Over! You lost.")
+            print("\nGame Over! You lost. Better luck next time!\n")
         elif enemy['health'] <= 0:
-            print("\nCongratulations! You defeated the enemy.")
-        restart = input('\nDo you want to play again? (y/n): ').strip().lower()
+            print("\nCongratulations! You defeated the enemy!\n")
+
+        handle_game_restart(restart)        
 
 if __name__ == '__main__':
     start_game()
