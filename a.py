@@ -4,7 +4,6 @@ import msvcrt
 import os
 
 def get_random_words():
-    
     random_words = random.sample(wordlist, 3)
     return random_words
 
@@ -42,11 +41,11 @@ def get_user_input(timeout):
                 return typed_word.strip()
             elif char == "\b":  
                 typed_word = typed_word[:-1]
-                print("\b \b", end="", flush=True)  
+                print("\b \b", end="", flush=True)
             else:
                 typed_word += char
                 print(char, end="", flush=True) 
-
+        # reference ChatGPT: https://chatgpt.com/share/675df582-4448-8013-8ac8-7c0561820056
     return None
 
 def handle_input(user_word, random_words, word_points, enemy):
@@ -89,6 +88,7 @@ def display_winning_message():
         ===========================
     """
     print(winning_banner)
+    #reference ChatGPT: https://chatgpt.com/share/675df437-0bfc-8013-9dc7-9ac2d83f6540
     time.sleep(4)
 
 def display_losing_message():
@@ -106,6 +106,7 @@ def display_losing_message():
 
 def handle_level_result(level, player, enemy):
     os.system("cls")
+    #reference ChatGPT: https://chatgpt.com/share/675df3cf-c8d0-8013-ba4f-18a332dc5af3
     display_health(level, player, enemy)
 
     if player['health'] <= 0:
